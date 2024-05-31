@@ -36,10 +36,10 @@ const Profile = () => {
       //     console.log('Upload is running');
       //     break;
       // }
-    };
+    },
     (error) => {
       setImageError(true)
-    } 
+    },
     ()=> {
       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => 
         setFormData({...formData, profilePicture: downloadURL}));
@@ -54,7 +54,7 @@ const Profile = () => {
       <input type="file" ref={fileRef} hidden accept="image/*"  
       onChange={(e) => setImage(e.target.files[0])}
       />
-     <img src={currentUser.profilePicture} alt="profile" 
+     <img src={formData.currentUser ||  currentUser.profilePicture} alt="profile" 
      className="h-24 w-24 self-center cursor-pointer rounded-full object-cover mt-2" 
      onClick={() => fileRef.current.click()}
      />
