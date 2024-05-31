@@ -68,7 +68,7 @@ const dispatch = useDispatch()
       </form>
       <div className='flex gap-2 mt-5 px-20'>
         <p>Dont have an account? </p>
-          <Link to='/sign-up'><span className='text-blue-500'>Register</span></Link>         
+          <Link to='/signup'><span className='text-blue-500'>Register</span></Link>         
         </div>
         <p className='text-red-500 text-center mt-5'>
           {error ? error.message || 'Something went wrong': ''}
