@@ -1,12 +1,15 @@
 // import { set } from 'mongoose'
 import React, { useState } from 'react'
-import { Link, Navigate, useNavigate} from 'react-router-dom'
+import { Link, useNavigate} from 'react-router-dom'
+import { signInStart, signInSuccess, signInFailure } from '../redux/User/userSlice'
+import { useDispatch, useSelector } from 'react-redux'
 
 const SignIn = () => {
   const [formData, setFormData] = useState({})
-  const [error, setError] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const {loading, error} = useSelector(state => state.user)
+  console.log(error)
 const navigate = useNavigate()
+const dispatch = useDispatch()
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value })
@@ -15,8 +18,8 @@ const navigate = useNavigate()
   const handleSubmit = async(e) => {
     e.preventDefault();
     try{
-      setLoading(true)
-      setError(false)
+      dispatch(signInStart())
+      dispatch(signInFailure(''))
       const res = await fetch('/api/auth/signin', {
         method: 'POST',
         headers: {
@@ -25,15 +28,16 @@ const navigate = useNavigate()
         body: JSON.stringify(formData)
       })
       const data = await res.json()
-      setLoading(false)
+      
       if(data.success ===false){
-        setError(true)
+        dispatch(signInFailure(data))
         return
       }
+      dispatch(signInSuccess(data))
       navigate('/')
     }catch(err){
-      setError(true)
-      setLoading(false)
+      dispatch(signInFailure(err))
+     
     }
   }
 
@@ -65,7 +69,7 @@ const navigate = useNavigate()
           <Link to='/sign-up'><span className='text-blue-500'>Register</span></Link>         
         </div>
         <p className='text-red-500 text-center mt-5'>
-          {error && 'Something went wrong'}
+          {error ? error.message || 'Something went wrong': ''}
         </p>
     </div>
   )
