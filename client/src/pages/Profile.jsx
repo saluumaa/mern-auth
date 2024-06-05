@@ -3,12 +3,12 @@ import { useEffect, useRef, useState } from "react"
 import { useDispatch } from "react-redux"
 import {getDownloadURL, getStorage, ref, uploadBytesResumable} from 'firebase/storage'
 import {app} from '../firebase'
-import { updateUserStart, updateUserSuccess, updateUserFailure } from "../redux/User/userSlice"
+import { updateUserStart, updateUserSuccess, updateUserFailure, deleteUserStart, deleteUserSuccess, deleteUserFailure } from "../redux/User/userSlice"
 
 const Profile = () => {
   const fileRef = useRef(null)
   const [image, setImage] = useState(undefined)
-  const {currentUser, loading, error} = useSelector(state => state.user)
+  const {currentUser, loading, error} = useSelector((state) => state.user)
   const [imagePercent, setImagePercent] = useState(0)
   const [imageError, setImageError] = useState(false)
   const [formData, setFormData] = useState({})
@@ -58,6 +58,22 @@ const Profile = () => {
     setFormData({...formData, [e.target.id]: e.target.value})
   }
 
+  const handleDeleteAccount = async() => {
+    try{
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: 'DELETE'
+      })
+      const data = await res.json()
+      console.log(data)
+      if(data.success === false){
+        dispatch(deleteUserFailure(data))
+        return
+      }
+      dispatch(deleteUserSuccess(data))
+    } catch(err){
+      dispatch(deleteUserFailure(err))
+    }
+  }
   const handleSubmit = async(e) => {
     e.preventDefault()
     try {
@@ -125,7 +141,7 @@ const Profile = () => {
     </button>
     </form>
     <div className=" flex justify-between mt-5">
-      <span className="text-red-700 cursor-pointer">Delete Account</span>
+      <span onClick={handleDeleteAccount} className="text-red-700 cursor-pointer">Delete Account</span>
       <span className="text-red-700 cursor-pointer">Sign Out</span>
      
     </div>
